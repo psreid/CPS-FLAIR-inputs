@@ -1,0 +1,235 @@
+* Please work
+TITLE
+
+* Set the defaults for precision simulations
+DEFAULTS                                                              PRECISIO
+* Define the beam characteristics
+BEAM            -11.                         0.045       0.0       -1.ELECTRON
+* Define the beam position
+BEAMPOS                             -90.
+PHOTONUC          1.                      BLCKHOLE  @LASTMAT
+PHYSICS           3.                                                  EVAPORAT
+PHYSICS           1.                                                  COALESCE
+MGNFIELD
+GEOBEGIN                                                              COMBNAME
+    0    0          
+* Black body
+SPH blkbody    0.0 0.0 0.0 100000.
+* Void sphere
+SPH void       0.0 0.0 0.0 50000.
+* Copper Core
+RPP beamhole   -.15 .15 -0.15 0.15 -95. 145.
+TRC cnclbmln   0.0 0.0 132. 0.0 0.0 2298. 2. 30.
+* Copper Core
+RPP cucore     -2.5 2.5 -4. 4. -21. 21.
+RPP rast1      -2. 2. -2. 2. 90. 135.
+RPP rast2      -1. 1. -1. 1. 60. 130.
+* Begin Magnetic Geometry
+RPP magnet     -20. 20. -10. 10. -20. 20.
+PLA right1     4.6075744691167 4.4463757726426 0.0 -8. 10. 0.0
+PLA right2     6.4255856387477 -6.161318787331 0.0 -8. -10. 0.0
+PLA right3     .8113270589497 0.0 .0365094447944 -1. 3.5 -1.
+PLA left1      -4.607574469117 4.4463757726429 0.0 8. 10. 0.0
+PLA left2      -6.405868866759 -6.181815595914 0.0 8. -9.8 0.0
+* End Magnetic Geometry
+PLA left3      -.8113312290263 0.0 .03641665758738 1. 3.5 0.0
+* Right Coil
+RPP rcoil      -20. -12. -17. 17. -27. 27.
+* Left Coil
+RPP lcoil      12. 20. -17. 17. -27. 27.
+* Tungston-Copper filler
+RPP tungcu     -19.75 19.75 -21.75 21.75 -26.25 26.25
+* iron powder box enclosure
+RPP febox      -35.25 35.25 -35.25 35.25 -27.25 27.25
+* iron powder box dummy detector enclosure (TOP)
+RPP det1       -35.25 35.25 35.25 35.30 -27.25 27.25
+* iron powder box dummy detector enclosure (Bottom)
+RPP det2       -35.25 35.25 -35.30 -35.25 -27.25 27.25
+* iron powder box dummy detector enclosure (Side-)
+RPP det3       -35.30 -35.25 -35.25 35.25 -27.25 27.25
+* iron powder box dummy detector enclosure (Side+)
+RPP det4       35.25 35.30 -35.25 35.25 -27.25 27.25
+* iron powder box enclosure(ENTRANCE)
+RPP det5       -35.25 35.25 -35.25 35.25 -27.35 -27.25
+RCC det51      0.0 0.0 -27.35 0.0 0.0 0.1 2.
+* iron powder box enclosure (EXIT)
+RPP det6       -35.25 35.25 -35.25 35.25 27.25 27.35
+RCC det61      0.0 0.0 27.25 0.0 0.0 0.1 2.
+RPP radiator   -1.5 1.5 -1.5 1.5 -31.5 -31.366
+* Tungston filler
+RPP wpowder    -85. 85. -85. 85. -75. 120.
+* Borated Polyethelyne
+RPP borethyl   -95. 95. -95. 95. -85. 130.
+* Tungston entrance det
+RPP wentdet    -85. 85. -85. 85. -86. -85.
+RCC wenthole   0.0 0.0 -86. 0.0 0.0 1. 2.
+RCC hallbase   0.0 -604.8 -200. 0.0 2976.4 0.0 2951.76
+RCC hallbas1   0.0 -304.8 -200. 0.0 2676.4 0.0 2651.76
+SPH hallhat    0.0 -2900. -200. 5000.7248094147
+RCC dump       0.0 0.0 2430. 0.0 0.0 2. 40.
+END
+BEAMHOLE     5 +(beamhole|rast1|rast2|cnclbmln)-radiator
+RADIATOR     5 +radiator
+RIGHTMAG     5 +(magnet +right1 +right2 +right3  )-(beamhole|rast1|rast2|cnclbmln)
+LEFTMAG      5 +(magnet +left1 +left2+left3)-beamhole
+CUCORE       5 +cucore-(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-(beamhole|rast1|rast2
+               |cnclbmln)
+COILS        5 +(lcoil|rcoil)-magnet-(beamhole|rast1|rast2|cnclbmln)
+TUNGCU       5 +tungcu-(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore-lcoil -rcoil-
+               (beamhole|rast1|rast2|cnclbmln)
+FEBOX        5 +febox -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore-lcoil -rcoil
+               -tungcu-(beamhole|rast1|rast2|cnclbmln)
+DET1         5 +det1
+DET2         5 +det2
+DET3         5 +det3
+DET4         5 +det4
+DET5         5 +(det5-det51 )
+DET6         5 +(det6-det61 )
+WENTDET      5 +wentdet-wenthole
+WPOWDER      5 +wpowder -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore-lcoil -rcoil
+               -tungcu-febox-(beamhole|rast1|rast2|cnclbmln) -radiator -det1 -det2 -det3 -det4-(det6-det61 )-(det5
+               -det51 )
+BORETHYL     5 +borethyl -wpowder -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore-lcoil
+               -rcoil
+               -tungcu-febox-(beamhole|rast1|rast2|cnclbmln) -radiator -det1 -det2 -det3 -det4-(det6-det61 )-(det5
+               -det51 )
+DUMP         5 +dump
+HALLA        5 +hallhat+hallbas1- febox -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore
+               -lcoil -rcoil
+               -tungcu -wpowder -(beamhole|rast1|rast2|cnclbmln)-radiator -dump -(wentdet -wenthole)-borethyl
+HALLWALL     5 +(hallbase)-(+hallbas1+hallhat) - febox -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2
+               +left3)-cucore
+               -lcoil -rcoil
+               -tungcu -wpowder -(beamhole|rast1|rast2|cnclbmln)-radiator-dump-borethyl
+* Void around
+VOID         5 +void- febox -(+(magnet +right1 +right2+right3 ))-(+magnet +left1 +left2+left3)-cucore-lcoil -rcoil
+               -tungcu -wpowder -(beamhole|rast1|rast2|cnclbmln)-radiator-( +hallhat+hallbas1 )-hallbase-dump
+               -borethyl
+* Black hole
+BLKBODY      5 +blkbody -void
+END
+GEOEND
+LAM-BIAS                 0.001              PHOTON    PHOTON
+EMFCUT       -0.0007   0.00007                VOID  @LASTREG
+EMFCUT       -0.0007   0.00007            BLCKHOLE  @LASTMAT          PROD-CUT
+RADDECAY          1.        1.        3.       0.0         0
+* ..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA    BLCKHOLE   BLKBODY
+ASSIGNMA    BLCKHOLE      DUMP
+ASSIGNMA    BLCKHOLE      VOID
+ASSIGNMA        IRON  RIGHTMAG
+ASSIGNMA        IRON   LEFTMAG
+ASSIGNMA      COPPER    CUCORE                            1.
+ASSIGNMA        IRON     COILS
+ASSIGNMA         WCu    TUNGCU
+ASSIGNMA        IRON     FEBOX
+MATERIAL         74.    183.84      16.3                           0.0WPOWDER
+LOW-MAT      WPOWDER       74.       -2.      296.                    TUNGSTEN
+ASSIGNMA     WPOWDER   WPOWDER
+MATERIAL                           15.15                              WCu
+COMPOUND        -0.2    COPPER      -0.8  TUNGSTEN                    WCu
+ASSIGNMA      COPPER  RADIATOR                            1.
+ASSIGNMA         AIR     HALLA
+ASSIGNMA      VACUUM  BEAMHOLE                            1.
+MATERIAL                            1.19                              BPOLY
+COMPOUND       -0.05     BORON     -0.95  POLYETHY                    BPOLY
+MATERIAL                            2.35                              CONCRETE
+MATERIAL         19.   39.0983     0.862                              POTASSIU
+MATERIAL          5.                2.37                              BORON
+COMPOUND       -0.01  HYDROGEN    -0.001    CARBON -0.529107    OXYGENCONCRETE
+COMPOUND      -0.016    SODIUM    -0.002  MAGNESIU -0.033872  ALUMINUMCONCRETE
+COMPOUND   -0.337021   SILICON    -0.013  POTASSIU    -0.044   CALCIUMCONCRETE
+COMPOUND      -0.014      IRON                                        CONCRETE
+ASSIGNMA    CONCRETE  HALLWALL
+ASSIGNMA     WPOWDER      DET1
+ASSIGNMA     WPOWDER      DET2
+ASSIGNMA     WPOWDER      DET4
+ASSIGNMA     WPOWDER      DET3
+ASSIGNMA     WPOWDER      DET6
+ASSIGNMA     WPOWDER      DET5
+ASSIGNMA         AIR   WENTDET
+ASSIGNMA       BPOLY  BORETHYL
+!@what.1=1*hour
+!@what.2=-1*day
+!@what.3=7*day
+!@what.4=30*day
+DCYTIMES       3600.   -86400.   604800.  2592000.
+* 2.7 microamp beam
+!@what.1=100*hour
+!@what.2=0.027*6.624E14
+IRRPROFI     360000.1.78848E13
+*USRBDX           99.   NEUTRON      -33.   WPOWDER     HALLA          boundary1
+*USRBDX                   1E-14       50.                            1. &
+*USRBDX           99.   NEUTRON      -35.     FEBOX      DET1          boundtop
+*USRBDX            1.     1E-14       50.                            1. &
+*USRBDX           99.   NEUTRON      -36.     FEBOX      DET2          boundbot
+*USRBDX            1.     1E-14       50.                            1. &
+*USRBDX           99.   NEUTRON      -37.     FEBOX      DET3          boundmin
+*USRBDX            1.     1E-14       50.                            1. &
+*USRBDX           99.   NEUTRON      -38.     FEBOX      DET4          boundpos
+*USRBDX            1.     1E-14       50.                            1. &
+USRBDX           99.   NEUTRON      -39.     FEBOX      DET5          boundent
+USRBDX            1.     1E-14       50.                            1. &
+*USRBDX           99.   NEUTRON      -40.     FEBOX      DET6          boundexit
+*USRBDX            1.     1E-14       50.                            1. &
+USRBDX           99.   NEUTRON      -41.   WPOWDER   WENTDET          boundexit
+USRBDX            1.     1E-14       50.                            1. &
+DCYSCORE          1.                           1HF       1HC          USRBIN
+* Old Detectors (Disabled Jan 5)
+USRBIN           11.   DOSE-EQ      -21.     1500.       0.0      166.1HF
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Clylindrical Dose detector
+USRBIN           11.   DOSE-EQ      -22.      500.       0.0      166.1HC
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+DCYSCORE          2.                           1DF       1DC          USRBIN
+* Old Detectors (Disabled Jan 5)
+USRBIN           11.   DOSE-EQ      -23.     1500.       0.0      166.1DF
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Clylindrical Dose detector
+USRBIN           11.   DOSE-EQ      -24.      500.       0.0      166.1DC
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+DCYSCORE          3.                           7DF       7DC          USRBIN
+* Old Detectors (Disabled Jan 5)
+USRBIN           11.   DOSE-EQ      -25.     1500.       0.0      166.7DF
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Clylindrical Dose detector
+USRBIN           11.   DOSE-EQ      -26.      500.       0.0      166.7DC
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+DCYSCORE          4.                          30DF      30DC          USRBIN
+* Old Detectors (Disabled Jan 5)
+USRBIN           11.   DOSE-EQ      -27.     1500.       0.0      166.30DF
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Clylindrical Dose detector
+USRBIN           11.   DOSE-EQ      -28.      500.       0.0      166.30DC
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+* Prompt far combined
+USRBIN           11.   DOSE-EQ      -29.     1500.       0.0      166.PFT
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Prompt close combined
+USRBIN           11.   DOSE-EQ      -30.      500.       0.0      166.PCT
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+* Prompt far neutron
+USRBIN           11.   DOSE-EQ      -31.     1500.       0.0      166.PFN
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Prompt close neutron
+USRBIN           11.   DOSE-EQ      -32.      500.       0.0      166.PCN
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+AUXSCORE      USRBIN   NEUTRON                 PFN       PCN
+* Prompt far gamma
+USRBIN           11.   DOSE-EQ      -34.     1500.       0.0      166.PFG
+USRBIN           0.0       0.0    -1600.      100.        1.      200. &
+* Prompt close gamma
+USRBIN           11.   DOSE-EQ      -42.      500.       0.0      166.PCG
+USRBIN           0.0       0.0     -234.      100.        1.      100. &
+* Entire Hall check
+USRBIN           11.   DOSE-EQ      -56.      500.       0.0    -2600.HUGE1
+USRBIN           0.0       0.0    -3100.      100.        1.      100. &
+AUXSCORE      USRBIN    PHOTON                 PFG       PCG
+* Old Detectors (Disabled Jan 5)
+*USRBIN           10.  ELECTRON      -24.       50.       50.      166.D1H3
+*USRBIN          -50.      -50.     -234.       20.       20.      100. &
+* Set the random number seed
+RANDOMIZ          1.
+* Set the number of primary histories to be simulated in the run
+START          3000.
+STOP
